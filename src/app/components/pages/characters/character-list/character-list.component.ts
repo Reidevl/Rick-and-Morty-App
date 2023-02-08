@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, ParamMap, Router } from '@angular/router';
 import { filter, take } from 'rxjs/operators';
+
+import { DOCUMENT } from '@angular/common';
 
 import { ICharacter } from '@app/shared/interfaces/character.interface';
 import { CharacterService } from '@app/shared/services/character.service';
@@ -19,7 +21,7 @@ export class CharacterListComponent implements OnInit {
   info: RequestInfo = {
     next: '',
   };
-
+  showGoUpButton = false;
   private pageNum:number = 1;
   private query: string = '';
   private hideScrollHeight = 200;
@@ -27,17 +29,19 @@ export class CharacterListComponent implements OnInit {
 
 
   constructor(
+    @Inject(DOCUMENT) private document: Document,
     private characterService: CharacterService,
     private route: ActivatedRoute,
     private router: Router
     ){
       this.onUrlChanged()
-
   }
 
   ngOnInit(): void{
     this.getCharactersByQuery()
   }
+
+  // METHODS
 
   private onUrlChanged(): void {
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd))
@@ -61,8 +65,7 @@ export class CharacterListComponent implements OnInit {
 
   private getDataFromService(): void {
     this.characterService.searchCharacters(this.query, this.pageNum)
-    .pipe(
-      take(1)
+    .pipe(take(1)
     ).subscribe ((response:any)=>{
 
       if(response?.results?.length){
@@ -72,7 +75,30 @@ export class CharacterListComponent implements OnInit {
       } else {
         this.characters = []
       }
-    })
+      })
+    }
+
+  @HostListener('window:scroll',[])
+  onWindowScroll():void{
+    const yOffSet = window.pageYOffset;
+    if((yOffSet || this.document.documentElement.scrollTop || this.document.body.scrollTop) > this.showScrollHeight) {
+      this.showGoUpButton = true
+    } else if(this.showGoUpButton && (yOffSet || this.document.documentElement.scrollTop || this.document.body.scrollTop) < this.hideScrollHeight){
+      this.showGoUpButton = false;
+    }
+
+  }
+
+  onScrollDown():void{
+    if(this.info.next){
+      this.pageNum++;
+      this.getDataFromService();
+    }
+  }
+
+  onScrollTop():void{
+    this.document.body.scrollTop = 0; //Safari
+    this.document.documentElement.scrollTop = 0; // Other
   }
 
 }
