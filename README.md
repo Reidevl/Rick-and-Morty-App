@@ -1,5 +1,17 @@
 # RickAndMortyApp
 
+This project was developed to practice and learning a bit more about how to use publics API.
+
+In this example I used the Rick and Morty's API and I created two views:
+1.- A characters list view and;
+2.- A character details view.
+
+Also I added a Search component to filter character by its name.
+
+My intention is to create a PWA with this example.
+
+##---------------------------------------------------------------
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.2.
 
 ## Development server
