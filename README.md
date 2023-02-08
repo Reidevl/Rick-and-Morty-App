@@ -10,7 +10,7 @@ Also I added a Search component to filter character by its name.
 
 My intention is to create a PWA with this example.
 
-##---------------------------------------------------------------
+## ---------------------------------------------------------------
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.2.
 
